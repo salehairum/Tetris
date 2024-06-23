@@ -47,7 +47,7 @@ void Tetromino::fillMatrix()
 	if (shapeType == 'I')
 	{
 		for (int i = 0; i < n; i++)
-			matrix[1][i] = 1;
+			matrix[i][1] = 1;
 	}
 	else if (shapeType == 'O')
 	{
@@ -57,31 +57,31 @@ void Tetromino::fillMatrix()
 	}
 	else if (shapeType == 'S')
 	{
-		matrix[0][1] = 1;
-		matrix[0][2] = 1;
 		matrix[1][0] = 1;
+		matrix[2][0] = 1;
+		matrix[0][1] = 1;
 		matrix[1][1] = 1;
 	}
 	else if (shapeType == 'Z')
 	{
 		matrix[0][0] = 1;
-		matrix[0][1] = 1;
+		matrix[1][0] = 1;
 		matrix[1][1] = 1;
-		matrix[1][2] = 1;
+		matrix[2][1] = 1;
 	}
 	else if (shapeType == 'L')
 	{
-		matrix[0][2] = 1;
-		matrix[1][0] = 1;
+		matrix[2][0] = 1;
+		matrix[0][1] = 1;
 		matrix[1][1] = 1;
-		matrix[1][2] = 1;
+		matrix[2][1] = 1;
 	}
 	else if (shapeType == 'J')
 	{
 		matrix[0][0] = 1;
-		matrix[1][0] = 1;
+		matrix[0][1] = 1;
 		matrix[1][1] = 1;
-		matrix[1][2] = 1;
+		matrix[2][1] = 1;
 	}
 	else if (shapeType == 'T')
 	{
