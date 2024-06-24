@@ -33,7 +33,7 @@ void drawTetrominoes(RenderWindow& w, RectangleShape& cell, char type, int row, 
 {
     cell.setFillColor(Color(255, 0, 0, 255));
 
-    Tetromino t(type);
+    Tetromino t(type, 0);
     int n = t.getMatrixSize();
     for (int i =0; i < n; i++)
     {
@@ -66,9 +66,12 @@ int main()
     //assign numbers to each of the tetromino letters
     char shapes[7] = { 'I','L','J','S','Z','T','O' };
 
+    //create array of colours of the blocks
+    Color colours[] = { Color(240,240,0,255), Color(240,160,0,255) ,Color(240,0,0,255), Color(160,0,240,255), Color(0,0,240,255), Color(0,240,240,255), Color(0,240,0,255) };
+
     //current position
     int currentRow = 0;
-    float currentCol = 0.0f;
+    int currentCol = 0;
 
     //game logic
     while (window.isOpen())
@@ -104,7 +107,7 @@ int main()
 
         //draw cells
         drawCells(window, cell);
-        drawTetrominoes(window, cell, shapes[0], currentRow, static_cast<int>(currentCol));
+        drawTetrominoes(window, cell, shapes[0], currentRow, currentCol);
 
         window.display();
     }

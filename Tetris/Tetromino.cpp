@@ -8,9 +8,10 @@ using namespace sf;
 Tetromino::Tetromino()
 {}
 
-Tetromino::Tetromino(char sType)
+Tetromino::Tetromino(char sType, int clr)
 {
 	shapeType = sType;
+	color = clr;
 	setMatrixSizeAndRotation();
 
 	matrix = new int* [n];
