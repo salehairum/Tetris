@@ -12,7 +12,7 @@ const float scale = 4.0;
 const float unit = cellSize * scale;
 const float outline = 4.0;
 const float timeStep = 0.75;
-const float moveSpeed = 5.0f; 
+const float moveSpeed = 40.0f; 
 
 //game functions
 void drawCells(RenderWindow& w, RectangleShape& cell)
@@ -35,7 +35,7 @@ void drawTetrominoes(RenderWindow& w, RectangleShape& cell, char type, int row, 
 
     Tetromino t(type);
     int n = t.getMatrixSize();
-    for (int i = 0; i < n; i++)
+    for (int i =0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
         {
@@ -84,6 +84,13 @@ int main()
                 window.close();
             else if (evnt.type == evnt.Resized)
                 cout << "Resize";
+            else if (evnt.type == Event::KeyPressed)
+            {
+                if (evnt.key.code == Keyboard::Left)
+                    currentCol -= 1; // Move left by one cell
+                else if (evnt.key.code == Keyboard::Right)
+                    currentCol += 1; // Move right by one cell
+            }
         }
 
         //after a specific interval, game is updated
@@ -92,12 +99,6 @@ int main()
             accumulator = 0.0f;
             currentRow++;
         }
-
-        //keyboard input
-        if (Keyboard::isKeyPressed(Keyboard::Key::Left))
-            currentCol -= moveSpeed * deltaTime;
-        if (Keyboard::isKeyPressed(Keyboard::Key::Right))
-            currentCol += moveSpeed * deltaTime;
 
         window.clear();
 
