@@ -14,7 +14,7 @@ const float outline = 4.0;
 const float timeStep = 0.75;
 const float moveSpeed = 40.0f; 
 
-//game functions
+//game functions for drawing
 void drawCells(RenderWindow& w, RectangleShape& cell)
 {
     cell.setFillColor(Color(0, 0, 255, 100));
@@ -35,6 +35,7 @@ void drawTetrominoes(RenderWindow& w, RectangleShape& cell, char type, int row, 
 
     Tetromino t(type, 0);
     int n = t.getMatrixSize();
+    bool collision = false;
     for (int i =0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
@@ -43,6 +44,25 @@ void drawTetrominoes(RenderWindow& w, RectangleShape& cell, char type, int row, 
             {
                 cell.setPosition(Vector2f((i + col) * unit, (j + row) * unit));
                 w.draw(cell);
+            }
+        }
+    }
+}
+
+//collision with last row
+void collisionWithGround(Tetromino& t, int m[rows][cols], Color colour[7], int i, int j)
+{
+    if (m[i+1][j])
+    {
+        //means collision, update matrix
+        for (int r = 0; r < t.getMatrixSize(); r++)
+        {
+            for (int c = 0; c < t.getMatrixSize(); c++)
+            {
+                if (t.getValueAtIndices(i, j))
+                {
+                    m[r][c] = 1;    //ehereeeeeeeeeeeee?
+                }
             }
         }
     }
@@ -72,6 +92,12 @@ int main()
     //current position
     int currentRow = 0;
     int currentCol = 0;
+
+    //game board matrix
+    int matrix[rows][cols];
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++)
+            matrix[i][j] = 1;
 
     //game logic
     while (window.isOpen())
