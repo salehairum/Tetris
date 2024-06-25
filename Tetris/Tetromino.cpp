@@ -44,24 +44,22 @@ void Tetromino::setMatrixSizeAndRotation()
 
 void Tetromino::fillMatrix_SetColor()
 {
-	//to work
-	//have to be changed!!!!!!
 	if (shapeType == 'I')
 	{
-		color = Color(240, 240, 0, 255);
+		color = Color(0, 240, 240, 255);
 		for (int i = 0; i < n; i++)
 			matrix[i][1] = 1;
 	}
 	else if (shapeType == 'O')
 	{
-		color = Color(240, 160, 0, 255);
+		color = Color(240, 240, 0, 255);
 		for (int i = 0; i < n; i++)
 			for (int j = 0; j < n; j++)
 				matrix[i][j] = 1;
 	}
 	else if (shapeType == 'S')
 	{
-		color = Color(240, 0, 0, 255);
+		color = Color(0, 240, 0, 255);
 		matrix[1][0] = 1;
 		matrix[2][0] = 1;
 		matrix[0][1] = 1;
@@ -69,7 +67,7 @@ void Tetromino::fillMatrix_SetColor()
 	}
 	else if (shapeType == 'Z')
 	{
-		color = Color(240, 240, 0, 255);
+		color = Color(240, 0, 0, 255);
 		matrix[0][0] = 1;
 		matrix[1][0] = 1;
 		matrix[1][1] = 1;
@@ -77,7 +75,7 @@ void Tetromino::fillMatrix_SetColor()
 	}
 	else if (shapeType == 'L')
 	{
-		color = Color(240, 240, 0, 255);
+		color = Color(240, 160, 0, 255);
 		matrix[2][0] = 1;
 		matrix[0][1] = 1;
 		matrix[1][1] = 1;
@@ -85,7 +83,7 @@ void Tetromino::fillMatrix_SetColor()
 	}
 	else if (shapeType == 'J')
 	{
-		color = Color(240, 240, 0, 255);
+		color = Color(0, 0, 240, 255);
 		matrix[0][0] = 1;
 		matrix[0][1] = 1;
 		matrix[1][1] = 1;
@@ -93,7 +91,7 @@ void Tetromino::fillMatrix_SetColor()
 	}
 	else if (shapeType == 'T')
 	{
-		color = Color(240, 240, 0, 255);
+		color = Color(160, 0, 240, 255);
 		matrix[0][1] = 1;
 		matrix[1][0] = 1;
 		matrix[1][1] = 1;
