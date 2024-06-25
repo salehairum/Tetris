@@ -10,18 +10,19 @@ class Tetromino
 	int rotation[2];
 	int** matrix;
 	char shapeType;
-	int color;
+	Color color;
 
 public:
 	//constructors
 	Tetromino();
-	Tetromino(char, int);
+	Tetromino(char);
 
 	//initialization functions
 	void setMatrixSizeAndRotation();
-	void fillMatrix();
+	void fillMatrix_SetColor();
 
 	//getters
 	int getValueAtIndices(int, int);
 	int getMatrixSize();
+	Color getColor();
 };
