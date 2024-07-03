@@ -5,6 +5,10 @@
 using namespace std;
 using namespace sf;
 
+//to work: the first tetromino also generated randomly
+//bounce back off walls
+//rotation
+
 //window and cell variables
 const int rows = 20;
 const int cols = 10;
@@ -31,7 +35,6 @@ char randomTetrominoGenerator(char prev[4], char shapes[7])
 //collision function
 void collisionWithGround(int m[rows][cols], int i, int j, bool& collision)
 {
-    //to work, update matrix
     if (m[j + 1][i] || j == rows - 1)
     {
         //this means that there are blocks below this tetromino and thus collision is taking place
@@ -42,8 +45,6 @@ void collisionWithGround(int m[rows][cols], int i, int j, bool& collision)
 //game functions for drawing
 void drawCells(RenderWindow& w, RectangleShape& cell, int m[rows][cols])
 {
-    /*cell.setFillColor(Color(0, 0, 255, 100));*/
-
     for (int i = 0; i < cols; i++)
     {
         for (int j = 0; j < rows; j++)
@@ -51,6 +52,8 @@ void drawCells(RenderWindow& w, RectangleShape& cell, int m[rows][cols])
             //to work
             //change colour of the matrix based on tetris added
             cell.setFillColor(Color(0, 0, 255, 100));
+            if(m[j][i])
+                cell.setFillColor(Color(0, 255, 255, 100));
             cell.setPosition(Vector2f(i * unit, j * unit));
             w.draw(cell);
         }
@@ -67,7 +70,7 @@ void drawTetrominoes(RenderWindow& w, RectangleShape& cell, Tetromino* t, int m[
         {
             if (t->getValueAtIndices(i, j))
             {
-                collisionWithGround(m, col, row, collision);
+                collisionWithGround(m, i+col, j+row, collision);
                 cell.setPosition(Vector2f((i + col) * unit, (j + row) * unit));
                 w.draw(cell);
             }
@@ -146,12 +149,32 @@ int main()
         if (accumulator >= timeStep)
         {
             accumulator = 0.0f;
-            currentRow++;
-
+         
             if (collision)
             {
+                //modify the matrix
+                int n = tetromino->getMatrixSize();
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = 0; j < n; j++)
+                    {
+                        if (tetromino->getValueAtIndices(i, j))
+                        {
+                            matrix[currentRow + j][currentCol+i] = 1;
+                        }
+                    }
+                }
+
+                //generate the next tetromino
                 tetromino = new Tetromino(randomTetrominoGenerator(prev, shapes));
+                
+                //for next round, reset variables
                 collision = false;
+                currentRow = 0;
+            }
+            else
+            {
+                currentRow++;
             }
         }
 
