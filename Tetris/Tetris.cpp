@@ -1,14 +1,9 @@
+//search "to work"
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Tetromino.h"
 using namespace std;
 using namespace sf;
-
-/*
-SOOOOOOOOO
-idk if the row and col that im sending to "collision with ground" is okay
-plusss, the matrix updation looks very wierd when i print in a separate loop, otherwise it works? what is this
-*/
 
 //window and cell variables
 const int rows = 20;
@@ -19,11 +14,25 @@ const float unit = cellSize * scale;
 const float outline = 4.0;
 const float timeStep = 0.75;
 
+char randomTetrominoGenerator(char prev[4], char shapes[7])
+{
+    int index = (rand() % 7);
+    char result = shapes[index];
+    for (int i = 0; i < 4; i++)
+        if (prev[i] == result)
+            return randomTetrominoGenerator(prev, shapes);
+    //if this has not appeared in the last 4 attempts, then shift the array and insert this in the prev array
+    for (int i = 3; i > 0; i--)
+        prev[i] = prev[i - 1];
+    prev[0] = result;
+    return result;
+}
+
 //collision function
 void collisionWithGround(int m[rows][cols], int i, int j, bool& collision)
 {
     //to work, update matrix
-    if (m[i][j+1])
+    if (m[j + 1][i] || j == rows - 1)
     {
         //this means that there are blocks below this tetromino and thus collision is taking place
         collision = true;
@@ -31,14 +40,17 @@ void collisionWithGround(int m[rows][cols], int i, int j, bool& collision)
 }
 
 //game functions for drawing
-void drawCells(RenderWindow& w, RectangleShape& cell)
+void drawCells(RenderWindow& w, RectangleShape& cell, int m[rows][cols])
 {
-    cell.setFillColor(Color(0, 0, 255, 100));
+    /*cell.setFillColor(Color(0, 0, 255, 100));*/
 
     for (int i = 0; i < cols; i++)
     {
         for (int j = 0; j < rows; j++)
         {
+            //to work
+            //change colour of the matrix based on tetris added
+            cell.setFillColor(Color(0, 0, 255, 100));
             cell.setPosition(Vector2f(i * unit, j * unit));
             w.draw(cell);
         }
@@ -65,6 +77,9 @@ void drawTetrominoes(RenderWindow& w, RectangleShape& cell, Tetromino* t, int m[
 
 int main()
 {
+    //initialize seed
+    srand(time(0));
+
     //Window
     RenderWindow window(VideoMode((cols + 10) * unit, rows * unit), "Tetris", Style::Close | Style::Resize);
 
@@ -81,23 +96,21 @@ int main()
     //assign numbers to each of the tetromino letters
     char shapes[7] = { 'I','L','J','S','Z','T','O' };
 
+    //array for keeping track of previously generated tetrominoes
+    char prev[4] = { 'I','I','I','I' };
+
     //current position
-    int currentRow = 17;
+    int currentRow = 0;
     int currentCol = 0;
 
     //game board matrix
     int matrix[rows][cols];
-    for (int i = 0; i < cols; i++)
+    for (int i = 0; i < rows; i++)
     {
-        for (int j = 0; j < rows; j++)
+        for (int j = 0; j < cols; j++)
         {
-            if (j == rows - 1)
-                matrix[i][j] = 1;
-            else matrix[i][j] = 0;
-            cout << matrix[i][j] << " ";
+            matrix[i][j] = 0;
         }
-        cout << endl;
-
     }
 
     //game logic
@@ -134,19 +147,19 @@ int main()
         {
             accumulator = 0.0f;
             currentRow++;
+
+            if (collision)
+            {
+                tetromino = new Tetromino(randomTetrominoGenerator(prev, shapes));
+                collision = false;
+            }
         }
 
         window.clear();
 
         //draw cells
-        drawCells(window, cell);
+        drawCells(window, cell, matrix);
         drawTetrominoes(window, cell, tetromino, matrix, currentRow, currentCol, collision);
-
-        if (collision)
-        {
-            tetromino = new Tetromino('S');
-            collision = false;
-        }
 
         window.display();
     }
