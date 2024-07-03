@@ -6,7 +6,7 @@ using namespace std;
 using namespace sf;
 
 //to work: the first tetromino also generated randomly
-//bounce back off walls
+//bounce back off walls/other tetrominoes
 //rotation
 
 //window and cell variables
@@ -35,7 +35,7 @@ char randomTetrominoGenerator(char prev[4], char shapes[7])
 //collision function
 void collisionWithGround(int m[rows][cols], int i, int j, bool& collision)
 {
-    if (m[j + 1][i] || j == rows - 1)
+    if (m[j + 1][i] || j >= rows - 1)
     {
         //this means that there are blocks below this tetromino and thus collision is taking place
         collision = true;
@@ -142,6 +142,8 @@ int main()
                     currentCol -= 1; // Move left by one cell
                 else if (evnt.key.code == Keyboard::Right)
                     currentCol += 1; // Move right by one cell
+                else if (evnt.key.code == Keyboard::Down)
+                    currentRow += 1; // Move right by one cell
             }
         }
 
