@@ -35,7 +35,7 @@ char randomTetrominoGenerator(char prev[4], char shapes[7])
 //collision function
 void collisionWithGround(int m[rows][cols], int i, int j, bool& collision)
 {
-    if (m[j + 1][i] || j >= rows - 1)
+    if (m[j + 1][i]!=0 || j >= rows - 1)
     {
         //this means that there are blocks below this tetromino and thus collision is taking place
         collision = true;
@@ -43,26 +43,24 @@ void collisionWithGround(int m[rows][cols], int i, int j, bool& collision)
 }
 
 //game functions for drawing
-void drawCells(RenderWindow& w, RectangleShape& cell, int m[rows][cols])
+void drawCells(RenderWindow& w, RectangleShape& cell, int m[rows][cols], Color colors[7])
 {
     for (int i = 0; i < cols; i++)
     {
         for (int j = 0; j < rows; j++)
         {
-            //to work
-            //change colour of the matrix based on tetris added
-            cell.setFillColor(Color(0, 0, 255, 100));
-            if(m[j][i])
-                cell.setFillColor(Color(0, 255, 255, 100));
+            if(m[j][i]!=0)
+                cell.setFillColor(colors[m[j][i]-1]);
+            else cell.setFillColor(Color(0, 0, 255, 100));
             cell.setPosition(Vector2f(i * unit, j * unit));
             w.draw(cell);
         }
     }
 }
 
-void drawTetrominoes(RenderWindow& w, RectangleShape& cell, Tetromino* t, int m[rows][cols], int row, int col, bool& collision)
+void drawTetrominoes(RenderWindow& w, RectangleShape& cell, Tetromino* t, int m[rows][cols], int row, int col, bool& collision, Color colors[7])
 {
-    cell.setFillColor(t->getColor());
+    cell.setFillColor(colors[t->getColor()]);
     int n = t->getMatrixSize();
     for (int i =0; i < n; i++)
     {
@@ -98,6 +96,8 @@ int main()
 
     //assign numbers to each of the tetromino letters
     char shapes[7] = { 'I','L','J','S','Z','T','O' };
+    //assign corresponding colours
+    Color colors[7] = { Color(0, 240, 240, 255), Color(240, 160, 0, 255), Color(0, 0, 240, 255), Color(0, 240, 0, 255), Color(240, 0, 0, 255), Color(160, 0, 240, 255), Color(240, 240, 0, 255) };
 
     //array for keeping track of previously generated tetrominoes
     char prev[4] = { 'I','I','I','I' };
@@ -139,11 +139,11 @@ int main()
             else if (evnt.type == Event::KeyPressed)
             {
                 if (evnt.key.code == Keyboard::Left)
-                    currentCol -= 1; // Move left by one cell
+                    currentCol -= 1; 
                 else if (evnt.key.code == Keyboard::Right)
-                    currentCol += 1; // Move right by one cell
-                else if (evnt.key.code == Keyboard::Down)
-                    currentRow += 1; // Move right by one cell
+                    currentCol += 1; 
+                else if (evnt.key.code == Keyboard::Down && !collision)
+                    currentRow += 1; 
             }
         }
 
@@ -156,13 +156,15 @@ int main()
             {
                 //modify the matrix
                 int n = tetromino->getMatrixSize();
+                int tetrominoColor = tetromino->getColor()+1;
+
                 for (int i = 0; i < n; i++)
                 {
                     for (int j = 0; j < n; j++)
                     {
                         if (tetromino->getValueAtIndices(i, j))
                         {
-                            matrix[currentRow + j][currentCol+i] = 1;
+                            matrix[currentRow + j][currentCol+i] = tetrominoColor;
                         }
                     }
                 }
@@ -183,8 +185,8 @@ int main()
         window.clear();
 
         //draw cells
-        drawCells(window, cell, matrix);
-        drawTetrominoes(window, cell, tetromino, matrix, currentRow, currentCol, collision);
+        drawCells(window, cell, matrix, colors);
+        drawTetrominoes(window, cell, tetromino, matrix, currentRow, currentCol, collision, colors);
 
         window.display();
     }

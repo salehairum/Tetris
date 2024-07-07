@@ -10,7 +10,7 @@ class Tetromino
 	int rotation[2];
 	int** matrix;
 	char shapeType;
-	Color color;
+	int color;
 
 public:
 	//constructors
@@ -24,5 +24,5 @@ public:
 	//getters
 	int getValueAtIndices(int, int);
 	int getMatrixSize();
-	Color getColor();
+	int getColor();
 };
