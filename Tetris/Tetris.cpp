@@ -5,8 +5,6 @@
 using namespace std;
 using namespace sf;
 
-//to work: line clearance: shifting 
-
 //to work: the first tetromino also generated randomly
 //bounce back off walls/other tetrominoes
 //rotation
@@ -77,35 +75,37 @@ void drawTetrominoes(RenderWindow& w, RectangleShape& cell, Tetromino* t, int m[
         }
     }
 }
-//
-//void shiftCellsDown(int m[rows][cols], int cleared)
-//{
-//    for (int i = cleared-1; i > 0; i--)
-//    {
-//        for (int j = 0; j < rows; j++)
-//        {
-//            m[j][i]=
-//        }
-//    }
-//}
-//
-//bool checkLineCleared(int m[rows][cols])
-//{
-//    for (int i = 0; i < cols; i++)
-//    {
-//        bool line = true;
-//        for (int j = 0; j < rows; j++)
-//        {
-//            if (m[j][i] != 0)
-//                line = false;
-//        }
-//        if (line)
-//        {
-//            //shift down cells above this row
-//            shiftCellsDown(m, i);
-//        }
-//    }
-//}
+
+void shiftCellsDown(int m[rows][cols], int cleared)
+{
+    for (int i = cleared-1; i > 0; i--)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            m[i+1][j] = m[i][j];
+        }
+    }
+}
+
+void clearLine(int m[rows][cols])
+{
+    for (int i = 0; i < rows; i++)
+    {
+        bool line = true;
+        for (int j = 0; j < cols && line; j++)
+        {
+            if (m[i][j] == 0)
+            {
+                line = false;
+            }
+        }
+        if (line)
+        {
+            //shift down cells above this row
+            shiftCellsDown(m, i);
+        }
+    }
+}
 
 int main()
 {
@@ -219,8 +219,8 @@ int main()
         drawCells(window, cell, matrix, colors);
         drawTetrominoes(window, cell, tetromino, matrix, currentRow, currentCol, collision, colors);
         
-        //check if a line has been cleared
-
+        //update matrix if line can be cleared
+        clearLine(matrix);
 
         window.display();
     }
