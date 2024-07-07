@@ -5,9 +5,17 @@
 using namespace std;
 using namespace sf;
 
-//to work: the first tetromino also generated randomly
-//bounce back off walls/other tetrominoes
-//rotation
+//to work:
+ 
+// 1) the first tetromino also generated randomly
+
+// 2) bounce back off walls/other tetrominoes
+
+// 3) rotation
+
+// 4) add destructors/del tetromino ptrs
+
+// 5) collisions with left/right boundaries
 
 //window and cell variables
 const int rows = 20;
