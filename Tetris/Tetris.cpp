@@ -7,15 +7,15 @@ using namespace sf;
 
 //to work:
  
-// 1) the first tetromino also generated randomly
+// 1) bounce back off walls/other tetrominoes
 
-// 2) bounce back off walls/other tetrominoes
+// 2) rotation
 
-// 3) rotation
+// 3) add destructors/del tetromino ptrs
 
-// 4) add destructors/del tetromino ptrs
+// 4) collisions with left/right boundaries
 
-// 5) collisions with left/right boundaries
+// 5) left, right collisions(with map)
 
 //window and cell variables
 const int rows = 20;
@@ -40,14 +40,20 @@ char randomTetrominoGenerator(char prev[4], char shapes[7])
     return result;
 }
 
-//collision function
-void collisionWithGround(int m[rows][cols], int i, int j, bool& collision)
+//collision functions
+void collisionBottom(int m[rows][cols], int i, int j, bool& collisionGround)
 {
     if (m[j + 1][i]!=0 || j >= rows - 1)
     {
         //this means that there are blocks below this tetromino and thus collision is taking place
-        collision = true;
+        collisionGround = true;
     }
+}
+
+void collisionLeft(int m[rows][cols], int i, int j)
+{
+    if (m[j][i - 1] != 0 || i >= 0)
+
 }
 
 //game functions for drawing
@@ -76,7 +82,7 @@ void drawTetrominoes(RenderWindow& w, RectangleShape& cell, Tetromino* t, int m[
         {
             if (t->getValueAtIndices(i, j))
             {
-                collisionWithGround(m, i+col, j+row, collision);
+                collisionBottom(m, i+col, j+row, collision);
                 cell.setPosition(Vector2f((i + col) * unit, (j + row) * unit));
                 w.draw(cell);
             }
@@ -143,7 +149,7 @@ int main()
 
     //current position
     int currentRow = 0;
-    int currentCol = 0;
+    int currentCol = 3;
 
     //game board matrix
     int matrix[rows][cols];
@@ -156,10 +162,10 @@ int main()
     }
 
     //game logic
-    bool collision = false;
+    bool collisionGround = false;
 
     //Tetromino ptr for tetromino that moves down
-    Tetromino* tetromino=new Tetromino('I');
+    Tetromino* tetromino= new Tetromino(randomTetrominoGenerator(prev, shapes));
 
     //game logic
     while (window.isOpen())
@@ -181,7 +187,7 @@ int main()
                     currentCol -= 1; 
                 else if (evnt.key.code == Keyboard::Right)
                     currentCol += 1; 
-                else if (evnt.key.code == Keyboard::Down && !collision)
+                else if (evnt.key.code == Keyboard::Down && !collisionGround)
                     currentRow += 1; 
             }
         }
@@ -191,7 +197,7 @@ int main()
         {
             accumulator = 0.0f;
          
-            if (collision)
+            if (collisionGround)
             {
                 //modify the matrix
                 int n = tetromino->getMatrixSize();
@@ -212,8 +218,12 @@ int main()
                 tetromino = new Tetromino(randomTetrominoGenerator(prev, shapes));
                 
                 //for next round, reset variables
-                collision = false;
+                collisionGround = false;
+                n = tetromino->getMatrixSize();
                 currentRow = 0;
+                if (n == 2)
+                    currentCol = 4;
+                else currentCol = 3;
             }
             else
             {
@@ -225,7 +235,7 @@ int main()
 
         //draw cells
         drawCells(window, cell, matrix, colors);
-        drawTetrominoes(window, cell, tetromino, matrix, currentRow, currentCol, collision, colors);
+        drawTetrominoes(window, cell, tetromino, matrix, currentRow, currentCol, collisionGround, colors);
         
         //update matrix if line can be cleared
         clearLine(matrix);
