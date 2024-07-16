@@ -7,15 +7,19 @@ using namespace sf;
 
 //to work:
  
-// 1) bounce back off walls/other tetrominoes
+// bounce back off walls/other tetrominoes
 
-// 2) rotation
+// rotation
 
-// 3) add destructors/del tetromino ptrs
+// add destructors/del tetromino ptrs
 
-// 4) collisions with left/right boundaries
+// collisions with left/right boundaries
 
-// 5) left, right collisions(with map)
+// left, right collisions(with map) 
+
+// game over?
+
+// the T one is generating in a wrong position
 
 //window and cell variables
 const int rows = 20;
@@ -52,8 +56,7 @@ void collisionBottom(int m[rows][cols], int i, int j, bool& collisionGround)
 
 void collisionOnLeft(int m[rows][cols], int i, int j, bool& collisionLeft, int size)
 {
-    //to work
-    if (i < size || m[j][i - 1] != 0)
+    if ( m[j][i - 1] != 0|| i - size < 0)
         collisionLeft = true;
     else collisionLeft = false;
 }
