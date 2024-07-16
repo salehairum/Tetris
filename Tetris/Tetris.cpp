@@ -50,10 +50,19 @@ void collisionBottom(int m[rows][cols], int i, int j, bool& collisionGround)
     }
 }
 
-void collisionLeft(int m[rows][cols], int i, int j)
+void collisionOnLeft(int m[rows][cols], int i, int j, bool& collisionLeft, int size)
 {
-    if (m[j][i - 1] != 0 || i >= 0)
+    //to work
+    if (i < size || m[j][i - 1] != 0)
+        collisionLeft = true;
+    else collisionLeft = false;
+}
 
+void collisionOnRight(int m[rows][cols], int i, int j, bool& collisionRight)
+{
+    if (i >= cols - 1 || m[j][i + 1] != 0)
+        collisionRight = true;
+    else collisionRight = false;
 }
 
 //game functions for drawing
@@ -72,7 +81,7 @@ void drawCells(RenderWindow& w, RectangleShape& cell, int m[rows][cols], Color c
     }
 }
 
-void drawTetrominoes(RenderWindow& w, RectangleShape& cell, Tetromino* t, int m[rows][cols], int row, int col, bool& collision, Color colors[7])
+void drawTetrominoes(RenderWindow& w, RectangleShape& cell, Tetromino* t, int m[rows][cols], int row, int col, bool& collisionGround, bool& collisionLeft, bool& collisionRight, Color colors[7])
 {
     cell.setFillColor(colors[t->getColor()]);
     int n = t->getMatrixSize();
@@ -82,7 +91,9 @@ void drawTetrominoes(RenderWindow& w, RectangleShape& cell, Tetromino* t, int m[
         {
             if (t->getValueAtIndices(i, j))
             {
-                collisionBottom(m, i+col, j+row, collision);
+                collisionBottom(m, i+col, j+row, collisionGround);
+                collisionOnLeft(m, i+col, j+row, collisionLeft, n);
+                collisionOnRight(m, i+col, j+row, collisionRight);
                 cell.setPosition(Vector2f((i + col) * unit, (j + row) * unit));
                 w.draw(cell);
             }
@@ -163,6 +174,8 @@ int main()
 
     //game logic
     bool collisionGround = false;
+    bool collisionLeft = false;
+    bool collisionRight = false;
 
     //Tetromino ptr for tetromino that moves down
     Tetromino* tetromino= new Tetromino(randomTetrominoGenerator(prev, shapes));
@@ -183,9 +196,10 @@ int main()
                 cout << "Resize";
             else if (evnt.type == Event::KeyPressed)
             {
-                if (evnt.key.code == Keyboard::Left)
+                int n = tetromino->getMatrixSize();
+                if (evnt.key.code == Keyboard::Left && !collisionLeft)
                     currentCol -= 1; 
-                else if (evnt.key.code == Keyboard::Right)
+                else if (evnt.key.code == Keyboard::Right && !collisionRight)
                     currentCol += 1; 
                 else if (evnt.key.code == Keyboard::Down && !collisionGround)
                     currentRow += 1; 
@@ -196,7 +210,7 @@ int main()
         if (accumulator >= timeStep)
         {
             accumulator = 0.0f;
-         
+
             if (collisionGround)
             {
                 //modify the matrix
@@ -235,7 +249,7 @@ int main()
 
         //draw cells
         drawCells(window, cell, matrix, colors);
-        drawTetrominoes(window, cell, tetromino, matrix, currentRow, currentCol, collisionGround, colors);
+        drawTetrominoes(window, cell, tetromino, matrix, currentRow, currentCol, collisionGround, collisionLeft, collisionRight,colors);
         
         //update matrix if line can be cleared
         clearLine(matrix);
