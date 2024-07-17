@@ -54,17 +54,23 @@ void collisionBottom(int m[rows][cols], int i, int j, bool& collisionGround)
     }
 }
 
-void collisionOnLeft(int m[rows][cols], int i, int j, bool& collisionLeft, int size)
+void collisionOnLeft(int m[rows][cols], int i, int j, bool& collisionLeft, bool& leftSet)
 {
-    if ( m[j][i - 1] != 0|| i - size < 0)
+    if (i <= 0 || m[j][i - 1] != 0 )
+    {
+        leftSet = true;
         collisionLeft = true;
+    }
     else collisionLeft = false;
 }
 
-void collisionOnRight(int m[rows][cols], int i, int j, bool& collisionRight)
+void collisionOnRight(int m[rows][cols], int i, int j, bool& collisionRight, bool& rightSet)
 {
     if (i >= cols - 1 || m[j][i + 1] != 0)
+    {
+        rightSet = true;
         collisionRight = true;
+    }
     else collisionRight = false;
 }
 
@@ -88,6 +94,8 @@ void drawTetrominoes(RenderWindow& w, RectangleShape& cell, Tetromino* t, int m[
 {
     cell.setFillColor(colors[t->getColor()]);
     int n = t->getMatrixSize();
+    bool leftSet = false;
+    bool rightSet = false;
     for (int i =0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
@@ -95,8 +103,10 @@ void drawTetrominoes(RenderWindow& w, RectangleShape& cell, Tetromino* t, int m[
             if (t->getValueAtIndices(i, j))
             {
                 collisionBottom(m, i+col, j+row, collisionGround);
-                collisionOnLeft(m, i+col, j+row, collisionLeft, n);
-                collisionOnRight(m, i+col, j+row, collisionRight);
+                if(!leftSet)
+                    collisionOnLeft(m, i+col, j+row, collisionLeft, leftSet);
+                if(!rightSet)
+                   collisionOnRight(m, i+col, j+row, collisionRight, rightSet);
                 cell.setPosition(Vector2f((i + col) * unit, (j + row) * unit));
                 w.draw(cell);
             }
@@ -199,9 +209,8 @@ int main()
                 cout << "Resize";
             else if (evnt.type == Event::KeyPressed)
             {
-                int n = tetromino->getMatrixSize();
                 if (evnt.key.code == Keyboard::Left && !collisionLeft)
-                    currentCol -= 1; 
+                    currentCol -= 1;
                 else if (evnt.key.code == Keyboard::Right && !collisionRight)
                     currentCol += 1; 
                 else if (evnt.key.code == Keyboard::Down && !collisionGround)
