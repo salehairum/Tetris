@@ -145,8 +145,8 @@ void Tetromino::rotation()
 
 		if (shapeType != 'T')	//has no corner pieces
 			moveCorner(copy);
-		//move other pieces
 
+		//move other pieces
 		if (matrix[1][0])
 		{
 			copy[2][1] = 1;
@@ -164,8 +164,38 @@ void Tetromino::rotation()
 			copy[1][2] = 1;
 		}
 
-		for (int i = 0; i < 3; i++)
-			for (int j = 0; j < 3; j++)
-				matrix[i][j] = copy[i][j];
 	}
+	else
+	{
+		if (matrix[0][1])
+			copy[2][0] = 1;
+		if (matrix[2][0])
+			copy[3][2] = 1;
+		if (matrix[3][2])
+			copy[1][3] = 1;
+		if (matrix[1][3])
+			copy[0][1] = 1;
+
+		if (matrix[1][0])
+			copy[3][1] = 1;
+		if (matrix[3][1])
+			copy[2][3] = 1;
+		if (matrix[2][3])
+			copy[0][2] = 1;
+		if (matrix[0][2])
+			copy[1][0] = 1;
+
+		if (matrix[1][1])
+			copy[2][1] = 1;
+		if (matrix[2][1])
+			copy[2][2] = 1;
+		if (matrix[2][2])
+			copy[1][2] = 1;
+		if (matrix[1][2])
+			copy[1][1] = 1;
+	}
+
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			matrix[i][j] = copy[i][j];
 }

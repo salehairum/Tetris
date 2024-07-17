@@ -9,17 +9,9 @@ using namespace sf;
  
 // bounce back off walls/other tetrominoes
 
-// rotation
-
 // add destructors/del tetromino ptrs
 
-// collisions with left/right boundaries
-
-// left, right collisions(with map) 
-
 // game over?
-
-// the T one is generating in a wrong position
 
 //window and cell variables
 const int rows = 20;
