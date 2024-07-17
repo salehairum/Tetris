@@ -212,9 +212,11 @@ int main()
                 if (evnt.key.code == Keyboard::Left && !collisionLeft)
                     currentCol -= 1;
                 else if (evnt.key.code == Keyboard::Right && !collisionRight)
-                    currentCol += 1; 
+                    currentCol += 1;
                 else if (evnt.key.code == Keyboard::Down && !collisionGround)
-                    currentRow += 1; 
+                    currentRow += 1;
+                else if (evnt.key.code == Keyboard::Up)
+                    tetromino->rotation();
             }
         }
 

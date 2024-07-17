@@ -30,15 +30,11 @@ void Tetromino::setMatrixSizeAndRotation()
 	}
 	else if (shapeType == 'O')
 	{
-		n = 2;/*
-		rotation[0] = 1;
-		rotation[1] = 1;*/
+		n = 2;
 	}
 	else 
 	{
 		n = 3;
-		rotation[0] = 1;
-		rotation[1] = 1;
 	}
 }
 
@@ -95,7 +91,7 @@ void Tetromino::fillMatrix_SetColor()
 		matrix[0][1] = 1;
 		matrix[1][0] = 1;
 		matrix[1][1] = 1;
-		matrix[1][2] = 1;
+		matrix[2][1] = 1;
 	}
 }
 
@@ -112,4 +108,68 @@ int Tetromino::getMatrixSize()
 int Tetromino::getColor()
 {
 	return color;
+}
+
+void Tetromino::moveCorner(int** copy)
+{
+	if (matrix[0][0])
+	{
+		matrix[0][0] = 0;
+		copy[0][2] = 1;
+	}
+	else if (matrix[0][2])
+	{
+		matrix[0][2] = 0;
+		copy[2][2] = 1;
+	}
+	else if (matrix[2][2])
+	{
+		matrix[2][2] = 0;
+		copy[2][0] = 1;
+	}
+	else if (matrix[2][0])
+	{
+		matrix[2][0] = 0;
+		copy[0][0] = 1;
+	}
+}
+
+void Tetromino::rotation()
+{
+	if (n == 2)	//'O' shape
+		return; //no rotation
+	int** copy=new int*[n];
+	for (int i = 0; i < n; i++)
+	{
+		copy[i] = new int[n] {0};
+	}
+	if (n == 3)
+	{
+		copy[1][1] = 1;
+
+		if (shapeType != 'T')	//has no corner pieces
+			moveCorner(copy);
+		//move other pieces
+
+		if (matrix[1][0])
+		{
+			copy[0][1] = 1;
+		}
+		if (matrix[0][1])
+		{
+			copy[1][2] = 1;
+		}
+		if (matrix[1][2])
+		{
+			copy[2][1] = 1;
+		}
+		if (matrix[2][1])
+		{
+			copy[1][0] = 1;
+		}
+
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 3; j++)
+				matrix[i][j] = copy[i][j];
+	}
 }

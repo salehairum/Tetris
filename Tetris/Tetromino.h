@@ -7,7 +7,6 @@ using namespace sf;
 class Tetromino
 {
 	int n;
-	int rotation[2];
 	int** matrix;
 	char shapeType;
 	int color;
@@ -25,4 +24,8 @@ public:
 	int getValueAtIndices(int, int);
 	int getMatrixSize();
 	int getColor();
+
+	//rotation functions
+	void rotation();
+	void moveCorner(int**);
 };
