@@ -114,22 +114,18 @@ void Tetromino::moveCorner(int** copy)
 {
 	if (matrix[0][0])
 	{
-		matrix[0][0] = 0;
-		copy[0][2] = 1;
-	}
-	else if (matrix[0][2])
-	{
-		matrix[0][2] = 0;
-		copy[2][2] = 1;
-	}
-	else if (matrix[2][2])
-	{
-		matrix[2][2] = 0;
 		copy[2][0] = 1;
 	}
 	else if (matrix[2][0])
 	{
-		matrix[2][0] = 0;
+		copy[2][2] = 1;
+	}
+	else if (matrix[2][2])
+	{
+		copy[0][2] = 1;
+	}
+	else if (matrix[0][2])
+	{
 		copy[0][0] = 1;
 	}
 }
@@ -153,19 +149,19 @@ void Tetromino::rotation()
 
 		if (matrix[1][0])
 		{
-			copy[0][1] = 1;
+			copy[2][1] = 1;
 		}
 		if (matrix[0][1])
 		{
-			copy[1][2] = 1;
+			copy[1][0] = 1;
 		}
 		if (matrix[1][2])
 		{
-			copy[2][1] = 1;
+			copy[0][1] = 1;
 		}
 		if (matrix[2][1])
 		{
-			copy[1][0] = 1;
+			copy[1][2] = 1;
 		}
 
 		for (int i = 0; i < 3; i++)
