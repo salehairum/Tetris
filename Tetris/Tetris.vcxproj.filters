@@ -26,5 +26,11 @@
     <ClInclude Include="Tetromino.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameFunctions.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

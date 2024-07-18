@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "GameFunctions.h"
 using namespace std;
 using namespace sf;
 
@@ -17,7 +18,7 @@ public:
 	Tetromino(char);
 
 	//initialization functions
-	void setMatrixSizeAndRotation();
+	void setMatrixSize();
 	void fillMatrix_SetColor();
 
 	//getters
@@ -26,6 +27,6 @@ public:
 	int getColor();
 
 	//rotation functions
-	void rotation();
+	void rotation(int [20][10], int&, int&);
 	void moveCorner(int**);
 };

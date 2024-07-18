@@ -11,7 +11,7 @@ Tetromino::Tetromino()
 Tetromino::Tetromino(char sType)
 {
 	shapeType = sType;
-	setMatrixSizeAndRotation();
+	setMatrixSize();
 
 	matrix = new int* [n];
 	for (int i = 0; i < n; i++)
@@ -20,13 +20,11 @@ Tetromino::Tetromino(char sType)
 	fillMatrix_SetColor();
 }
 
-void Tetromino::setMatrixSizeAndRotation()
+void Tetromino::setMatrixSize()
 {
 	if (shapeType == 'I')
 	{
 		n = 4;
-		/*rotation[0] = 1;
-		rotation[1] = 1;*/
 	}
 	else if (shapeType == 'O')
 	{
@@ -130,7 +128,7 @@ void Tetromino::moveCorner(int** copy)
 	}
 }
 
-void Tetromino::rotation()
+void Tetromino::rotation(int m[20][10], int& cRow, int& cCol)
 {
 	if (n == 2)	//'O' shape
 		return; //no rotation
@@ -163,7 +161,6 @@ void Tetromino::rotation()
 		{
 			copy[1][2] = 1;
 		}
-
 	}
 	else
 	{
@@ -193,6 +190,36 @@ void Tetromino::rotation()
 			copy[1][2] = 1;
 		if (matrix[1][2])
 			copy[1][1] = 1;
+	}
+
+	if (collisionAtRotation(m, this, cRow, cCol))
+	{
+		if (collisionAtRotation(m, this, cRow + 1, cCol))
+		{
+			if (collisionAtRotation(m, this, cRow + 1, cCol + 1))
+			{
+				if (collisionAtRotation(m, this, cRow, cCol - 2))
+				{
+					if (collisionAtRotation(m, this, cRow + 1, cCol - 2))
+						return;	//no rotation
+					else
+					{
+						cRow++;
+						cCol -= 2;
+					}
+				}
+				else
+				{
+					cCol -= 2;
+				}
+			}
+			else
+			{
+				cRow++;
+				cCol++;
+			}
+		}
+		else cRow++;
 	}
 
 	for (int i = 0; i < n; i++)

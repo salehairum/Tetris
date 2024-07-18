@@ -2,6 +2,8 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Tetromino.h"
+#include "Constants.h"
+#include "GameFunctions.h"
 using namespace std;
 using namespace sf;
 
@@ -14,8 +16,6 @@ using namespace sf;
 // game over?
 
 //window and cell variables
-const int rows = 20;
-const int cols = 10;
 const float cellSize = 8.0;
 const float scale = 4.0;
 const float unit = cellSize * scale;
@@ -64,6 +64,36 @@ void collisionOnRight(int m[rows][cols], int i, int j, bool& collisionRight, boo
         collisionRight = true;
     }
     else collisionRight = false;
+}
+
+bool collisionAtRotation(int m[rows][cols], Tetromino* t, int row, int col)
+{
+    cout << "row: " << row << endl;
+    cout << "col: " << col << endl << endl;
+    int n = t->getMatrixSize();
+    bool colLeft = false;
+    bool colRight = false;
+    bool set = false;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (t->getValueAtIndices(i, j))
+            {
+                if(m[j + row][i + col])
+                    return true;
+
+                collisionOnLeft(m, i + col, j + row, colLeft, set);
+                if (colLeft)
+                    return true;
+
+                collisionOnRight(m, i + col, j + row, colRight, set);
+                if (colRight)
+                    return true;
+            }
+        }
+    }
+    return false;
 }
 
 //game functions for drawing
@@ -208,7 +238,7 @@ int main()
                 else if (evnt.key.code == Keyboard::Down && !collisionGround)
                     currentRow += 1;
                 else if (evnt.key.code == Keyboard::Up)
-                    tetromino->rotation();
+                    tetromino->rotation(matrix, currentRow, currentCol);
             }
         }
 
