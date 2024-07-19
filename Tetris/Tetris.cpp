@@ -9,8 +9,6 @@ using namespace sf;
 
 //to work:
  
-// bounce back off walls/other tetrominoes
-
 // add destructors/del tetromino ptrs
 
 // game over?
@@ -66,11 +64,8 @@ void collisionOnRight(int m[rows][cols], int i, int j, bool& collisionRight, boo
     else collisionRight = false;
 }
 
-bool collisionAtRotation(int m[rows][cols], Tetromino* t, int row, int col)
+bool collisionAtRotation(int m[rows][cols], int** copy, int n, int row, int col)
 {
-   /* cout << "row: " << row << endl;
-    cout << "col: " << col << endl << endl;*/
-    int n = t->getMatrixSize();
     bool colLeft = false;
     bool colRight = false;
     bool colGround = false;
@@ -79,22 +74,18 @@ bool collisionAtRotation(int m[rows][cols], Tetromino* t, int row, int col)
     {
         for (int j = 0; j < n; j++)
         {
-            if (t->getValueAtIndices(i, j))
+            if (copy[i][j])
             {
-                if(m[j + row][i + col])
+                if(m[j + row][i + col] || i + col < 0 || i + col > cols - 1)
+                {
                     return true;
-
-                collisionOnLeft(m, i + col, j + row, colLeft, set);
-                if (colLeft)
-                    return true;
-
-                collisionOnRight(m, i + col, j + row, colRight, set);
-                if (colRight)
-                    return true;
+                }
 
                 collisionBottom(m, i + col, j + row, colGround);
                 if (colGround)
+                {
                     return true;
+                }
             }
         }
     }

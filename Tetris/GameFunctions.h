@@ -18,7 +18,7 @@ void collisionOnLeft(int[rows][cols], int, int, bool&, bool&);
 
 void collisionOnRight(int [rows][cols], int, int, bool&, bool&);
 
-bool collisionAtRotation(int [rows][cols], Tetromino*, int, int);
+bool collisionAtRotation(int [rows][cols], int**, int, int, int);
 
 void drawCells(RenderWindow&, RectangleShape&, int [rows][cols], Color [7]);
 
