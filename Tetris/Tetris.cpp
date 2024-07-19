@@ -68,11 +68,12 @@ void collisionOnRight(int m[rows][cols], int i, int j, bool& collisionRight, boo
 
 bool collisionAtRotation(int m[rows][cols], Tetromino* t, int row, int col)
 {
-    cout << "row: " << row << endl;
-    cout << "col: " << col << endl << endl;
+   /* cout << "row: " << row << endl;
+    cout << "col: " << col << endl << endl;*/
     int n = t->getMatrixSize();
     bool colLeft = false;
     bool colRight = false;
+    bool colGround = false;
     bool set = false;
     for (int i = 0; i < n; i++)
     {
@@ -89,6 +90,10 @@ bool collisionAtRotation(int m[rows][cols], Tetromino* t, int row, int col)
 
                 collisionOnRight(m, i + col, j + row, colRight, set);
                 if (colRight)
+                    return true;
+
+                collisionBottom(m, i + col, j + row, colGround);
+                if (colGround)
                     return true;
             }
         }

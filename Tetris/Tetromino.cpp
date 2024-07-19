@@ -194,14 +194,21 @@ void Tetromino::rotation(int m[20][10], int& cRow, int& cCol)
 
 	if (collisionAtRotation(m, this, cRow, cCol))
 	{
+		cout << "Basic rotation failed!" << endl;
 		if (collisionAtRotation(m, this, cRow + 1, cCol))
 		{
+			cout << "first(row+1) failed" << endl;
 			if (collisionAtRotation(m, this, cRow + 1, cCol + 1))
 			{
+				cout << "second(row+1, col+1) failed" << endl;
 				if (collisionAtRotation(m, this, cRow, cCol - 2))
 				{
+					cout << "third(col-2) failed" << endl;
 					if (collisionAtRotation(m, this, cRow + 1, cCol - 2))
+					{
+						cout << "fourth(row+1, col-2) failed" << endl;
 						return;	//no rotation
+					}
 					else
 					{
 						cRow++;
