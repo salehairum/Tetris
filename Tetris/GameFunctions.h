@@ -27,3 +27,5 @@ void drawTetrominoes(RenderWindow& w, RectangleShape&, Tetromino* t, int [rows][
 void shiftCellsDown(int[rows][cols], int);
 
 void clearLine(int [rows][cols]);
+
+bool gameOver(int [rows][cols], int,int);

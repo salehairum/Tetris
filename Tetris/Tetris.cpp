@@ -163,6 +163,19 @@ void clearLine(int m[rows][cols])
     }
 }
 
+bool gameOver(int m[rows][cols], int startCol, int pieceSize)
+{
+    for (int i = startCol; i < startCol + pieceSize; i++)
+    {
+        for(int j=0;j<pieceSize;j++)
+        {
+            if (m[j][i])
+                return true;
+        }
+    }
+    return false;
+}
+
 int main()
 {
     //initialize seed
@@ -175,6 +188,18 @@ int main()
     RectangleShape cell(Vector2f(unit - (outline * 2), unit - (outline * 2)));
     cell.setOutlineColor(Color::Black);
     cell.setOutlineThickness(outline);
+
+    //font and text
+    Font gameOverFont;
+    if (!gameOverFont.loadFromFile("Pixellettersfull-BnJ5.ttf"))
+        cout << "error in loading" << endl;
+
+    Text gameOverText;
+    gameOverText.setFillColor(Color::White);
+    gameOverText.setString("Game Over");
+    gameOverText.setCharacterSize(50);
+    gameOverText.setPosition(50, 50);
+    gameOverText.setFont(gameOverFont);
 
     //clock for moving cell down
     Clock clock;
@@ -207,6 +232,7 @@ int main()
     bool collisionGround = false;
     bool collisionLeft = false;
     bool collisionRight = false;
+    bool gameEnd = false;
 
     //Tetromino ptr for tetromino that moves down
     Tetromino* tetromino= new Tetromino(randomTetrominoGenerator(prev, shapes));
@@ -270,6 +296,8 @@ int main()
                 if (n == 2)
                     currentCol = 4;
                 else currentCol = 3;
+
+                gameEnd = gameOver(matrix, currentCol, n);
             }
             else
             {
@@ -279,12 +307,19 @@ int main()
 
         window.clear();
 
-        //draw cells
-        drawCells(window, cell, matrix, colors);
-        drawTetrominoes(window, cell, tetromino, matrix, currentRow, currentCol, collisionGround, collisionLeft, collisionRight,colors);
-        
-        //update matrix if line can be cleared
-        clearLine(matrix);
+        if (!gameEnd)
+        {
+            //draw cells
+            drawCells(window, cell, matrix, colors);
+            drawTetrominoes(window, cell, tetromino, matrix, currentRow, currentCol, collisionGround, collisionLeft, collisionRight, colors);
+
+            //update matrix if line can be cleared
+            clearLine(matrix);
+        }
+        else
+        {
+            window.draw(gameOverText);
+        }
 
         window.display();
     }
