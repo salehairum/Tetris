@@ -143,7 +143,7 @@ void shiftCellsDown(int m[rows][cols], int cleared)
     }
 }
 
-void clearLine(int m[rows][cols])
+void clearLine(int m[rows][cols], int& score)
 {
     for (int i = 0; i < rows; i++)
     {
@@ -156,7 +156,8 @@ void clearLine(int m[rows][cols])
             }
         }
         if (line)
-        {
+        {   
+            score++;
             //shift down cells above this row
             shiftCellsDown(m, i);
         }
@@ -191,45 +192,59 @@ int main()
     cell.setOutlineThickness(outline);
 
     //play button
-    RectangleShape playButton(Vector2f(cols * unit, (rows / 2) * unit + 2 * unit));
+    RectangleShape playButton(Vector2f((rows / 4) * unit, (cols / 4) * unit));
     playButton.setFillColor(Color(0, 0, 255, 100));
-    playButton.setPosition(windowPos.x / 2, windowPos.y / 2 + 100);
+    playButton.setPosition(windowPos.x / 2 +75, windowPos.y / 2 + 175);
+
+    //game over background
+    RectangleShape gameOverBox(Vector2f(rows / 2 * unit, cols / 2 * unit));
+    gameOverBox.setFillColor(Color(30, 20, 117));
+    gameOverBox.setPosition(windowPos.x / 2-160, windowPos.y / 2+120);
+    gameOverBox.setOutlineColor(Color::Black);
+    gameOverBox.setOutlineThickness(10);
 
     //tetris logo
-    RectangleShape tetrisLogo(Vector2f(750, 750));
+    RectangleShape tetrisLogo(Vector2f(600, 600));
     Texture tetris;
     tetris.loadFromFile("tetrislogo.png");
     tetrisLogo.setTexture(&tetris);
     Vector2f logoSize = tetrisLogo.getSize();
     Vector2u textureSize = tetris.getSize();
     tetrisLogo.setScale(logoSize.x / textureSize.x, logoSize.y / textureSize.y);
-    tetrisLogo.setPosition(windowPos.x / 2 - 200, windowPos.y / 4);
+    tetrisLogo.setPosition(windowPos.x / 2 +25, windowPos.y / 2-75);
 
     //font and text
     Font font;
     if (!font.loadFromFile("Faction-Clean.ttf"))
         cout << "error in loading" << endl;
 
-    Text tetrisStart;
-    tetrisStart.setFillColor(Color::White);
-    tetrisStart.setString("TETRIS");
-    tetrisStart.setCharacterSize(100);
-    tetrisStart.setPosition(windowPos.x/2-140, windowPos.y/2);
-    tetrisStart.setFont(font);
-
     Text play;
     play.setFillColor(Color::White);
     play.setString("Play");
-    play.setCharacterSize(75);
-    play.setPosition(windowPos.x / 2-100, windowPos.y / 2+100);
+    play.setCharacterSize(45);
+    play.setPosition(windowPos.x / 2+107, windowPos.y / 2+175);
     play.setFont(font);
 
     Text gameOverText;
     gameOverText.setFillColor(Color::White);
     gameOverText.setString("Game Over");
     gameOverText.setCharacterSize(50);
-    gameOverText.setPosition(50, 50);
+    gameOverText.setPosition(windowPos.x/2-130, windowPos.y/2+160);
     gameOverText.setFont(font);
+
+    Text scoreText;
+    scoreText.setFillColor(Color::White);
+    scoreText.setString("Score: ");
+    scoreText.setCharacterSize(35);
+    scoreText.setPosition(windowPos.x / 2 + 95, windowPos.y / 2 + 275);
+    scoreText.setFont(font);
+
+    Text scoreNum;
+    scoreNum.setFillColor(Color::White);
+    scoreNum.setString("0");
+    scoreNum.setCharacterSize(35);
+    scoreNum.setPosition(windowPos.x / 2 + 195, windowPos.y / 2 + 275);
+    scoreNum.setFont(font);
 
     //clock for moving cell down
     Clock clock;
@@ -264,6 +279,7 @@ int main()
     bool collisionRight = false;
     bool gameEnd = false;
     bool gameStart = false;
+    int score = 0;
 
     //Tetromino ptr for tetromino that moves down
     Tetromino* tetromino= new Tetromino(randomTetrominoGenerator(prev, shapes));
@@ -352,25 +368,29 @@ int main()
 
         window.clear();
 
-        if (!gameStart)
-        {
-            window.draw(tetrisLogo);
-            window.draw(playButton);
-            window.draw(play);
-        }
-        else if (!gameEnd && gameStart)
-        {
-            //draw cells
-            drawCells(window, cell, matrix, colors);
-            drawTetrominoes(window, cell, tetromino, matrix, currentRow, currentCol, collisionGround, collisionLeft, collisionRight, colors);
+        window.draw(tetrisLogo);
+        window.draw(playButton);
+        window.draw(play);
+        window.draw(scoreText);
 
-            //update matrix if line can be cleared
-            clearLine(matrix);
-        }
-        else if(gameEnd)
+        //draw cells
+        drawCells(window, cell, matrix, colors);
+
+        if(!gameEnd && gameStart)
         {
-            window.draw(gameOverText);
+            drawTetrominoes(window, cell, tetromino, matrix, currentRow, currentCol, collisionGround, collisionLeft, collisionRight, colors);
+            //update matrix if line can be cleared
+            clearLine(matrix, score);
+            string scoreStr = to_string(score);
+            scoreNum.setString(scoreStr);
+        }
+        window.draw(scoreNum);
+        
+        if(gameEnd)
+        {
             gameStart = false;
+            window.draw(gameOverBox);
+            window.draw(gameOverText);
         }
 
         window.display();
