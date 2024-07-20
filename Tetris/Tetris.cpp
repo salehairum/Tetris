@@ -183,23 +183,53 @@ int main()
 
     //Window
     RenderWindow window(VideoMode((cols + 10) * unit, rows * unit), "Tetris", Style::Close | Style::Resize);
+    Vector2i windowPos=window.getPosition();
 
     //cells for the window
     RectangleShape cell(Vector2f(unit - (outline * 2), unit - (outline * 2)));
     cell.setOutlineColor(Color::Black);
     cell.setOutlineThickness(outline);
 
+    //play button
+    RectangleShape playButton(Vector2f(cols * unit, (rows / 2) * unit + 2 * unit));
+    playButton.setFillColor(Color(0, 0, 255, 100));
+    playButton.setPosition(windowPos.x / 2, windowPos.y / 2 + 100);
+
+    //tetris logo
+    RectangleShape tetrisLogo(Vector2f(750, 750));
+    Texture tetris;
+    tetris.loadFromFile("tetrislogo.png");
+    tetrisLogo.setTexture(&tetris);
+    Vector2f logoSize = tetrisLogo.getSize();
+    Vector2u textureSize = tetris.getSize();
+    tetrisLogo.setScale(logoSize.x / textureSize.x, logoSize.y / textureSize.y);
+    tetrisLogo.setPosition(windowPos.x / 2 - 200, windowPos.y / 4);
+
     //font and text
-    Font gameOverFont;
-    if (!gameOverFont.loadFromFile("Pixellettersfull-BnJ5.ttf"))
+    Font font;
+    if (!font.loadFromFile("Faction-Clean.ttf"))
         cout << "error in loading" << endl;
+
+    Text tetrisStart;
+    tetrisStart.setFillColor(Color::White);
+    tetrisStart.setString("TETRIS");
+    tetrisStart.setCharacterSize(100);
+    tetrisStart.setPosition(windowPos.x/2-140, windowPos.y/2);
+    tetrisStart.setFont(font);
+
+    Text play;
+    play.setFillColor(Color::White);
+    play.setString("Play");
+    play.setCharacterSize(75);
+    play.setPosition(windowPos.x / 2-100, windowPos.y / 2+100);
+    play.setFont(font);
 
     Text gameOverText;
     gameOverText.setFillColor(Color::White);
     gameOverText.setString("Game Over");
     gameOverText.setCharacterSize(50);
     gameOverText.setPosition(50, 50);
-    gameOverText.setFont(gameOverFont);
+    gameOverText.setFont(font);
 
     //clock for moving cell down
     Clock clock;
@@ -233,6 +263,7 @@ int main()
     bool collisionLeft = false;
     bool collisionRight = false;
     bool gameEnd = false;
+    bool gameStart = false;
 
     //Tetromino ptr for tetromino that moves down
     Tetromino* tetromino= new Tetromino(randomTetrominoGenerator(prev, shapes));
@@ -262,52 +293,72 @@ int main()
                 else if (evnt.key.code == Keyboard::Up)
                     tetromino->rotation(matrix, currentRow, currentCol);
             }
-        }
-
-        //after a specific interval, game is updated
-        if (accumulator >= timeStep)
-        {
-            accumulator = 0.0f;
-
-            if (collisionGround)
+            else if (evnt.type == Event::MouseButtonPressed)
             {
-                //modify the matrix
-                int n = tetromino->getMatrixSize();
-                int tetrominoColor = tetromino->getColor()+1;
-
-                for (int i = 0; i < n; i++)
+                if (evnt.mouseButton.button == Mouse::Left)
                 {
-                    for (int j = 0; j < n; j++)
+                    Vector2i mousePosition = Mouse::getPosition(window);
+                    if (playButton.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
                     {
-                        if (tetromino->getValueAtIndices(i, j))
-                        {
-                            matrix[currentRow + j][currentCol+i] = tetrominoColor;
-                        }
+                        gameStart = true;
                     }
                 }
-
-                //generate the next tetromino
-                tetromino = new Tetromino(randomTetrominoGenerator(prev, shapes));
-                
-                //for next round, reset variables
-                collisionGround = false;
-                n = tetromino->getMatrixSize();
-                currentRow = 0;
-                if (n == 2)
-                    currentCol = 4;
-                else currentCol = 3;
-
-                gameEnd = gameOver(matrix, currentCol, n);
             }
-            else
+        }
+
+        if(gameStart)
+        {
+            //after a specific interval, game is updated
+            if (accumulator >= timeStep)
             {
-                currentRow++;
+                accumulator = 0.0f;
+
+                if (collisionGround)
+                {
+                    //modify the matrix
+                    int n = tetromino->getMatrixSize();
+                    int tetrominoColor = tetromino->getColor() + 1;
+
+                    for (int i = 0; i < n; i++)
+                    {
+                        for (int j = 0; j < n; j++)
+                        {
+                            if (tetromino->getValueAtIndices(i, j))
+                            {
+                                matrix[currentRow + j][currentCol + i] = tetrominoColor;
+                            }
+                        }
+                    }
+
+                    //generate the next tetromino
+                    tetromino = new Tetromino(randomTetrominoGenerator(prev, shapes));
+
+                    //for next round, reset variables
+                    collisionGround = false;
+                    n = tetromino->getMatrixSize();
+                    currentRow = 0;
+                    if (n == 2)
+                        currentCol = 4;
+                    else currentCol = 3;
+
+                    gameEnd = gameOver(matrix, currentCol, n);
+                }
+                else
+                {
+                    currentRow++;
+                }
             }
         }
 
         window.clear();
 
-        if (!gameEnd)
+        if (!gameStart)
+        {
+            window.draw(tetrisLogo);
+            window.draw(playButton);
+            window.draw(play);
+        }
+        else if (!gameEnd && gameStart)
         {
             //draw cells
             drawCells(window, cell, matrix, colors);
@@ -316,9 +367,10 @@ int main()
             //update matrix if line can be cleared
             clearLine(matrix);
         }
-        else
+        else if(gameEnd)
         {
             window.draw(gameOverText);
+            gameStart = false;
         }
 
         window.display();
